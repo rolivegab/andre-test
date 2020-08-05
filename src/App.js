@@ -1,25 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
-function App() {
+import { ApolloProvider } from '@apollo/client';
+import client from './client';
+import Login from './screens/Login';
+import Titles from './screens/Titles';
+
+const App = ({
+  initialScreen
+}) => {
+  const [actualScreen, setActualScreen] = useState(initialScreen)
+
+  const renderActualScreen = () => {
+    switch (actualScreen) {
+      case 'Login':
+        return <Login afterLogin={() => setActualScreen('Titles')} />;
+      case 'Titles':
+        return <>
+          <Titles afterLogout={() => setActualScreen('Login')} />
+        </>;
+      default:
+        return (
+          <div>Erro 404 - página não encontrada</div>
+        )
+    }
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client} >
+      {renderActualScreen()}
+    </ApolloProvider>
   );
 }
 
